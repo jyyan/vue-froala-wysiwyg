@@ -126,6 +126,9 @@ export default (Vue, Options = {}) => {
 
         function htmlSet() {
 
+          if (self._editor === null) {
+            self.createEditor();
+          }
           self._editor.html.set(self.model || '');
 
           //This will reset the undo stack everytime the model changes externally. Can we fix this?

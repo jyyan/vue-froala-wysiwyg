@@ -36,7 +36,7 @@
     "dev": "node build/dev-server.js",
     "build": "yarn run release && yarn run build:es",
     "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
-    "release": "SET NODE_ENV=production && webpack --progress --hide-modules --config  ./build/webpack.release.js && webpack --progress --hide-modules --config  ./build/webpack.release.min.js",
+    "release": "NODE_ENV=production && webpack --progress --hide-modules --config  ./build/webpack.release.js && webpack --progress --hide-modules --config  ./build/webpack.release.min.js",
     "prepublish": "yarn run build"
   },
   "dependencies": {
