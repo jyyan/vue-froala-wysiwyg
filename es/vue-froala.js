@@ -87,7 +87,6 @@ var _default = function _default(Vue) {
         this.registerEvents();
         this.initListeners();
         this._editor = new _froalaEditor["default"](this.$el, this.currentConfig);
-        this.editorInitialized = true;
       },
       setContent: function setContent(firstTime) {
         if (!this.editorInitialized && !firstTime) {
@@ -108,16 +107,15 @@ var _default = function _default(Vue) {
         var self = this;
 
         function htmlSet() {
-          if (self._editor === null) {
-            self.createEditor();
+          // Check if editor not null
+          if (self._editor == null) return;
+          if (self._editor.html != undefined) self._editor.html.set(self.model || ''); //This will reset the undo stack everytime the model changes externally. Can we fix this?
+
+          if (self._editor.undo != undefined) {
+            self._editor.undo.saveStep();
+
+            self._editor.undo.reset();
           }
-
-          self._editor.html.set(self.model || ''); //This will reset the undo stack everytime the model changes externally. Can we fix this?
-
-
-          self._editor.undo.saveStep();
-
-          self._editor.undo.reset();
         }
 
         if (firstTime) {
@@ -145,11 +143,12 @@ var _default = function _default(Vue) {
       },
       destroyEditor: function destroyEditor() {
         if (this._editor) {
+          this.initEvents = [];
+
           this._editor.destroy();
 
           this.editorInitialized = false;
           this._editor = null;
-          this.initEvents = [];
         }
       },
       getEditor: function getEditor() {
@@ -199,7 +198,10 @@ var _default = function _default(Vue) {
       initListeners: function initListeners() {
         var self = this;
         this.registerEvent('initialized', function () {
-          if (self._editor.events) {
+          // Editor initialized
+          self.editorInitialized = true; // Check if editor not null and editor has events
+
+          if (self._editor != null && self._editor.events) {
             // bind contentChange and keyup event to froalaModel
             self._editor.events.on('contentChanged', function () {
               self.updateModel();
