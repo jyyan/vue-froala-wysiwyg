@@ -149,6 +149,7 @@ var _default = function _default(Vue) {
 
           this.editorInitialized = false;
           this._editor = null;
+          this.initEvents = [];
         }
       },
       getEditor: function getEditor() {

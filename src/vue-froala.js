@@ -168,12 +168,11 @@ export default (Vue, Options = {}) => {
       },
 
       destroyEditor: function() {
-
         if (this._editor) {
-
           this._editor.destroy();
           this.editorInitialized = false;
           this._editor = null;
+          this.initEvents = [];
         }
       },
 

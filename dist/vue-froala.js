@@ -250,6 +250,7 @@ __webpack_require__.r(__webpack_exports__);
 
           this.editorInitialized = false;
           this._editor = null;
+          this.initEvents = [];
         }
       },
       getEditor: function getEditor() {
