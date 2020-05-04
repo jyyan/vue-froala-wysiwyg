@@ -1,4 +1,10 @@
-import FroalaEditor from 'froala-editor';
+const FroalaEditor = require('@/../vendors/froala_editor_sources/js/froala_editor')
+require('@/../vendors/froala_editor_sources/js/plugins.pkgd')
+require('@/../vendors/froala_editor_sources/js/third_party/font_awesome')
+
+// support for zh_tw
+require('./froala_zh_tw.js')
+
 export default (Vue, Options = {}) => {
 
   var froalaEditorFunctionality = {
