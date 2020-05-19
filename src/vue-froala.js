@@ -1,6 +1,15 @@
+/*
 const FroalaEditor = require('@/../vendors/froala_editor_sources/js/froala_editor')
+
 require('@/../vendors/froala_editor_sources/js/plugins.pkgd')
 require('@/../vendors/froala_editor_sources/js/third_party/font_awesome')
+// support for zh_tw
+require('./froala_zh_tw.js')
+*/
+
+const FroalaEditor = require('froala-editor')
+require('froala-editor/js/plugins.pkgd.min')
+require('froala-editor/js/third_party/font_awesome.min.js')
 
 // support for zh_tw
 require('./froala_zh_tw.js')

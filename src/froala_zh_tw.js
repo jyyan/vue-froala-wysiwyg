@@ -5,7 +5,7 @@
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('@/../vendors/froala_editor_sources/js/froala_editor')) :
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('froala-editor')) :
   typeof define === 'function' && define.amd ? define(['froala-editor'], factory) :
   (factory(global.FroalaEditor));
 }(this, (function (FE) { 'use strict';
