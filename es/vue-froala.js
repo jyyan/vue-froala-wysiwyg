@@ -2,17 +2,52 @@
 
 var _interopRequireDefault = require("@babel/runtime-corejs2/helpers/interopRequireDefault");
 
-var _Object$defineProperty = require("@babel/runtime-corejs2/core-js/object/define-property");
+var _Object$defineProperty2 = require("@babel/runtime-corejs2/core-js/object/define-property");
 
-_Object$defineProperty(exports, "__esModule", {
+_Object$defineProperty2(exports, "__esModule", {
   value: true
 });
 
 exports["default"] = void 0;
 
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/define-property"));
+
+var _defineProperties = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/define-properties"));
+
+var _getOwnPropertyDescriptors = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/get-own-property-descriptors"));
+
+var _getOwnPropertyDescriptor = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/get-own-property-descriptor"));
+
+var _getOwnPropertySymbols = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/get-own-property-symbols"));
+
+var _keys = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/keys"));
+
+var _typeof2 = _interopRequireDefault(require("@babel/runtime-corejs2/helpers/typeof"));
+
+var _defineProperty3 = _interopRequireDefault(require("@babel/runtime-corejs2/helpers/defineProperty"));
+
 var _stringify = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/json/stringify"));
 
-var _froalaEditor = _interopRequireDefault(require("froala-editor"));
+function ownKeys(object, enumerableOnly) { var keys = (0, _keys["default"])(object); if (_getOwnPropertySymbols["default"]) { var symbols = (0, _getOwnPropertySymbols["default"])(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return (0, _getOwnPropertyDescriptor["default"])(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty3["default"])(target, key, source[key]); }); } else if (_getOwnPropertyDescriptors["default"]) { (0, _defineProperties["default"])(target, (0, _getOwnPropertyDescriptors["default"])(source)); } else { ownKeys(Object(source)).forEach(function (key) { (0, _defineProperty2["default"])(target, key, (0, _getOwnPropertyDescriptor["default"])(source, key)); }); } } return target; }
+
+/*
+const FroalaEditor = require('@/../vendors/froala_editor_sources/js/froala_editor')
+
+require('@/../vendors/froala_editor_sources/js/plugins.pkgd')
+require('@/../vendors/froala_editor_sources/js/third_party/font_awesome')
+// support for zh_tw
+require('./froala_zh_tw.js')
+*/
+var FroalaEditor = require('froala-editor');
+
+require('froala-editor/js/plugins.pkgd.min');
+
+require('froala-editor/js/third_party/font_awesome.min.js'); // support for zh_tw
+
+
+require('./froala_zh_tw.js');
 
 var _default = function _default(Vue) {
   var Options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -81,12 +116,67 @@ var _default = function _default(Vue) {
           return;
         }
 
-        this.currentConfig = this.config || this.defaultConfig;
+        this.currentConfig = this.clone(this.config || this.defaultConfig);
+        this.currentConfig = _objectSpread({}, this.currentConfig);
         this.setContent(true); // Bind editor events.
 
         this.registerEvents();
         this.initListeners();
-        this._editor = new _froalaEditor["default"](this.$el, this.currentConfig);
+        this._editor = new FroalaEditor(this.$el, this.currentConfig);
+      },
+      // Return clone object 
+      clone: function clone(item) {
+        var me = this;
+
+        if (!item) {
+          return item;
+        } // null, undefined values check
+
+
+        var types = [Number, String, Boolean],
+            result; // normalizing primitives if someone did new String('aaa'), or new Number('444');
+
+        types.forEach(function (type) {
+          if (item instanceof type) {
+            result = type(item);
+          }
+        });
+
+        if (typeof result == "undefined") {
+          if (Object.prototype.toString.call(item) === "[object Array]") {
+            result = [];
+            item.forEach(function (child, index, array) {
+              result[index] = me.clone(child);
+            });
+          } else if ((0, _typeof2["default"])(item) == "object") {
+            // testing that this is DOM
+            if (item.nodeType && typeof item.cloneNode == "function") {
+              result = item.cloneNode(true);
+            } else if (!item.prototype) {
+              // check that this is a literal
+              if (item instanceof Date) {
+                result = new Date(item);
+              } else {
+                // it is an object literal
+                result = {};
+
+                for (var i in item) {
+                  result[i] = me.clone(item[i]);
+                }
+              }
+            } else {
+              if (false && item.constructor) {
+                result = new item.constructor();
+              } else {
+                result = item;
+              }
+            }
+          } else {
+            result = item;
+          }
+        }
+
+        return result;
       },
       setContent: function setContent(firstTime) {
         if (!this.editorInitialized && !firstTime) {
