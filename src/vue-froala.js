@@ -103,7 +103,8 @@ export default (Vue, Options = {}) => {
           return;
         }
 
-        this.currentConfig = this.config || this.defaultConfig;
+        this.currentConfig = this.clone(this.config || this.defaultConfig);
+        this.currentConfig =  {...this.currentConfig};
 
         this.setContent(true);
 
@@ -112,6 +113,57 @@ export default (Vue, Options = {}) => {
         this.initListeners();
 
         this._editor = new FroalaEditor(this.$el, this.currentConfig)
+      },
+
+       // Return clone object 
+      clone(item) {
+        const me = this;
+        if (!item) {
+          return item;
+        } // null, undefined values check
+
+        let types = [Number, String, Boolean],
+          result;
+
+        // normalizing primitives if someone did new String('aaa'), or new Number('444');
+        types.forEach(function (type) {
+          if (item instanceof type) {
+            result = type(item);
+          }
+        });
+
+        if (typeof result == "undefined") {
+          if (Object.prototype.toString.call(item) === "[object Array]") {
+            result = [];
+            item.forEach(function (child, index, array) {
+              result[index] = me.clone(child);
+            });
+          } else if (typeof item == "object") {
+            // testing that this is DOM
+            if (item.nodeType && typeof item.cloneNode == "function") {
+              result = item.cloneNode(true);
+            } else if (!item.prototype) { // check that this is a literal
+              if (item instanceof Date) {
+                result = new Date(item);
+              } else {
+                // it is an object literal
+                result = {};
+                for (var i in item) {
+                  result[i] = me.clone(item[i]);
+                }
+              }
+            } else {
+              if (false && item.constructor) {
+                result = new item.constructor();
+              } else {
+                result = item;
+              }
+            }
+          } else {
+            result = item;
+          }
+        }
+        return result;
       },
 
       setContent: function (firstTime) {
